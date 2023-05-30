@@ -208,20 +208,24 @@ public class UsuarioDAO extends DAO {
 		return status;
 	}
 	
-	
-	public boolean autenticar(String login , String senha) {
-		boolean resp = false;
-		
-		try {
-			Statement st = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			String sql = "SELECT * FROM usuario WHERE nomeusuario LIKE '" + login + "' AND senha LIKE '" + senha  + "'";
-			System.out.println(sql);
-			ResultSet rs = st.executeQuery(sql);
-			resp = rs.next();
-	        st.close();
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-		return resp;
-	}	
+	public boolean autenticar(String login, String senha) {
+	    boolean resp = false;
+	    
+	    try {
+	        String sql = "SELECT * FROM usuario WHERE nomeusuario = ? AND senha = ?";
+	        PreparedStatement pstmt = conexao.prepareStatement(sql);
+	        pstmt.setString(1, login);
+	        pstmt.setString(2, senha);
+	        
+	        ResultSet rs = pstmt.executeQuery();
+	        
+	        resp = rs.next();
+	        
+	        pstmt.close();
+	    } catch (Exception e) {
+	        System.err.println(e.getMessage());
+	    }
+	    
+	    return resp;
+	}		
 }
